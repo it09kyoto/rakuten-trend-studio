@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendStudio — 趋势洞察</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink:    #0a0a0a;
+            --muted:  #888;
+            --rule:   #e8e4e0;
+            --cream:  #f8f6f3;
+            --white:  #ffffff;
+            --spring: cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        html { font-size: 16px; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            background: var(--white);
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            letter-spacing: 0.01em;
+        }
+
+        /* ── Header ── */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 60px;
+            background: rgba(255,255,255,0.93);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--rule);
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        .nav-tag {
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* ── Main Layout ── */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding-top: 60px;
+        }
+
+        /* ── Top text ── */
+        .intro {
+            text-align: center;
+            padding: 52px 40px 40px;
+            opacity: 0;
+            animation: fadeUp 0.9s ease 0.15s forwards;
+        }
+
+        .intro-eyebrow {
+            font-size: 0.62rem;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        .intro-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.4rem, 5vw, 3.8rem);
+            font-weight: 300;
+            line-height: 1.08;
+        }
+        .intro-title em { font-style: italic; }
+
+        /* ── Carousel Wrapper ── */
+        .carousel-outer {
+            width: 100%;
+            position: relative;
+            opacity: 0;
+            animation: fadeUp 0.9s ease 0.35s forwards;
+        }
+
+        /* Edge fade masks */
+        .carousel-outer::before,
+        .carousel-outer::after {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 80px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .carousel-outer::before {
+            left: 0;
+            background: linear-gradient(to right, rgba(255,255,255,0.95), transparent);
+        }
+        .carousel-outer::after {
+            right: 0;
+            background: linear-gradient(to left, rgba(255,255,255,0.95), transparent);
+        }
+
+        /* ── Scroll Track ── */
+        .carousel {
+            display: flex;
+            gap: 20px;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            padding: 32px calc(50vw - 160px);  /* center first/last card */
+            scrollbar-width: none;
+            cursor: grab;
+        }
+        .carousel::-webkit-scrollbar { display: none; }
+        .carousel.grabbing { cursor: grabbing; }
+
+        /* ── Card ── */
+        .cat-card {
+            flex: 0 0 300px;
+            height: 400px;
+            scroll-snap-align: center;
+            scroll-snap-stop: always;
+            background: var(--white);
+            border: 1px solid var(--rule);
+            display: flex;
+            flex-direction: column;
+            padding: 36px 32px;
+            text-decoration: none;
+            color: var(--ink);
+            position: relative;
+            overflow: hidden;
+
+            /* default: shrunk */
+            transform: scale(0.88);
+            opacity: 0.45;
+            transition:
+                transform 0.5s var(--spring),
+                opacity   0.4s ease,
+                border-color 0.3s,
+                background   0.3s;
+            will-change: transform, opacity;
+        }
+
+        /* Active card: full size */
+        .cat-card.active {
+            transform: scale(1);
+            opacity: 1;
+            border-color: var(--ink);
+        }
+
+        /* Background fill sweeps up on active */
+        .cat-card::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 0%;
+            background: var(--cream);
+            transition: height 0.5s var(--spring);
+            z-index: 0;
+        }
+        .cat-card.active::before { height: 100%; }
+
+        /* All content above the pseudo bg */
+        .cat-card > * { position: relative; z-index: 1; }
+
+        .card-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: var(--muted);
+            margin-bottom: auto;
+        }
+
+        .card-icon {
+            font-size: 3.2rem;
+            line-height: 1;
+            margin-bottom: 20px;
+            display: block;
+            transition: transform 0.5s var(--spring);
+        }
+        .cat-card.active .card-icon { transform: scale(1.1) translateY(-4px); }
+
+        .card-name {
+            font-size: 1.4rem;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            margin-bottom: 6px;
+        }
+
+        .card-sub {
+            font-size: 0.68rem;
+            color: var(--muted);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 28px;
+        }
+
+        .card-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--ink);
+            padding: 10px 20px;
+            border: 1px solid var(--ink);
+            width: fit-content;
+
+            /* hidden until active */
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.35s ease 0.1s, transform 0.35s var(--spring) 0.1s;
+        }
+        .cat-card.active .card-cta {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card-cta:hover { background: var(--ink); color: var(--white); }
+
+        /* ── Dots ── */
+        .dots {
+            display: flex;
+            gap: 7px;
+            justify-content: center;
+            margin: 28px 0 12px;
+            opacity: 0;
+            animation: fadeUp 0.7s ease 0.5s forwards;
+        }
+
+        .dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--rule);
+            transition: background 0.3s, transform 0.3s var(--spring), width 0.3s var(--spring);
+        }
+        .dot.active {
+            background: var(--ink);
+            width: 20px;
+            border-radius: 3px;
+        }
+
+        /* ── Hint ── */
+        .swipe-hint {
+            font-size: 0.6rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeUp 0.7s ease 0.65s forwards;
+        }
+
+        /* ── Footer ── */
+        footer {
+            padding: 20px 40px;
+            border-top: 1px solid var(--rule);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-text {
+            font-size: 0.62rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 500px) {
+            header { padding: 0 20px; }
+            .intro { padding: 40px 20px 28px; }
+            .cat-card { flex: 0 0 260px; height: 360px; }
+            .carousel { padding: 28px calc(50vw - 130px); }
+            footer { padding: 16px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+    <a href="/" class="logo">TrendStudio</a>
+    <span class="nav-tag">楽天 / リアルタイム</span>
+</header>
+
+<main>
+    <!-- Title -->
+    <div class="intro">
+        <p class="intro-eyebrow">Real-time Trend Intelligence</p>
+        <h1 class="intro-title">洞察<em>市场</em>趋势</h1>
+    </div>
+
+    <!-- Carousel -->
+    <div class="carousel-outer">
+        <div class="carousel" id="carousel">
+
+            <a th:href="@{/analysis(genre='0',      lang=${lang})}" class="cat-card" data-index="0">
+                <span class="card-number">01 / 04</span>
+                <span class="card-icon">◈</span>
+                <span class="card-name">综合排行</span>
+                <span class="card-sub">All Categories</span>
+                <span class="card-cta">查看分析 →</span>
+            </a>
+
+            <a th:href="@{/analysis(genre='551167', lang=${lang})}" class="cat-card" data-index="1">
+                <span class="card-number">02 / 04</span>
+                <span class="card-icon">◉</span>
+                <span class="card-name">家电类</span>
+                <span class="card-sub">Electronics</span>
+                <span class="card-cta">查看分析 →</span>
+            </a>
+
+            <a th:href="@{/analysis(genre='100371', lang=${lang})}" class="cat-card" data-index="2">
+                <span class="card-number">03 / 04</span>
+                <span class="card-icon">◌</span>
+                <span class="card-name">服装类</span>
+                <span class="card-sub">Fashion</span>
+                <span class="card-cta">查看分析 →</span>
+            </a>
+
+            <a th:href="@{/analysis(genre='216129', lang=${lang})}" class="cat-card" data-index="3">
+                <span class="card-number">04 / 04</span>
+                <span class="card-icon">◎</span>
+                <span class="card-name">美妆类</span>
+                <span class="card-sub">Beauty</span>
+                <span class="card-cta">查看分析 →</span>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- Dots indicator -->
+    <div class="dots" id="dots">
+        <div class="dot active" data-i="0"></div>
+        <div class="dot"        data-i="1"></div>
+        <div class="dot"        data-i="2"></div>
+        <div class="dot"        data-i="3"></div>
+    </div>
+
+    <p class="swipe-hint">← 左右滑动 →</p>
+</main>
+
+<footer>
+    <span class="footer-text">© 2026 TrendStudio</span>
+    <span class="footer-text">Powered by 楽天 Ranking</span>
+</footer>
+
+<script>
+(function () {
+    const carousel = document.getElementById('carousel');
+    const cards    = Array.from(carousel.querySelectorAll('.cat-card'));
+    const dots     = Array.from(document.getElementById('dots').querySelectorAll('.dot'));
+    let activeIdx  = 0;
+
+    /* ── Activate card by index ── */
+    function activate(idx) {
+        activeIdx = idx;
+        cards.forEach((c, i) => c.classList.toggle('active', i === idx));
+        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+
+    /* ── Find center card on scroll ── */
+    function onScroll() {
+        const cx = carousel.scrollLeft + carousel.clientWidth / 2;
+        let closest = 0, minDist = Infinity;
+        cards.forEach((card, i) => {
+            const cardCx = card.offsetLeft + card.offsetWidth / 2;
+            const dist   = Math.abs(cx - cardCx);
+            if (dist < minDist) { minDist = dist; closest = i; }
+        });
+        if (closest !== activeIdx) activate(closest);
+    }
+
+    carousel.addEventListener('scroll', onScroll, { passive: true });
+
+    /* ── Click dot → scroll to card ── */
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            const card = cards[i];
+            carousel.scrollTo({
+                left: card.offsetLeft - (carousel.clientWidth - card.offsetWidth) / 2,
+                behavior: 'smooth'
+            });
+        });
+    });
+
+    /* ── Click card (not active) → center it instead of navigating ── */
+    cards.forEach((card, i) => {
+        card.addEventListener('click', e => {
+            if (i !== activeIdx) {
+                e.preventDefault();
+                carousel.scrollTo({
+                    left: card.offsetLeft - (carousel.clientWidth - card.offsetWidth) / 2,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    /* ── Mouse drag support (desktop) ── */
+    let isDragging = false, startX = 0, startScroll = 0, moved = false;
+
+    carousel.addEventListener('mousedown', e => {
+        isDragging = true; moved = false;
+        startX = e.pageX;
+        startScroll = carousel.scrollLeft;
+        carousel.classList.add('grabbing');
+    });
+
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        const dx = e.pageX - startX;
+        if (Math.abs(dx) > 4) moved = true;
+        carousel.scrollLeft = startScroll - dx;
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        carousel.classList.remove('grabbing');
+    });
+
+    /* Prevent link navigation when dragged */
+    carousel.addEventListener('click', e => {
+        if (moved) { e.preventDefault(); moved = false; }
+    });
+
+    /* ── Init: activate first card ── */
+    activate(0);
+})();
+</script>
+
+</body>
+</html>
