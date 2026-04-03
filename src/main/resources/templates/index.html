@@ -3,91 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrendStudio — 趋势洞察</title>
+    <title>TrendStudio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=DM+Sans:wght@200;300;400&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --ink:    #0a0a0a;
-            --muted:  #888;
-            --rule:   #e8e4e0;
-            --cream:  #f8f6f3;
-            --white:  #ffffff;
-            --spring: cubic-bezier(0.34, 1.2, 0.64, 1);
+            --bg:     #07080f;
+            --glass:  rgba(255,255,255,0.05);
+            --glassh: rgba(255,255,255,0.09);
+            --border: rgba(255,255,255,0.09);
+            --bordera:rgba(255,255,255,0.20);
+            --text:   #e2e6f8;
+            --muted:  rgba(200,210,240,0.40);
+            --spring: cubic-bezier(0.34,1.22,0.64,1);
+
+            --c0: #7b8fff;  /* indigo   — 综合 */
+            --c1: #a78bfa;  /* violet   — 家电 */
+            --c2: #60b8ff;  /* sky blue — 服装 */
+            --c3: #c084fc;  /* purple   — 美妆 */
         }
 
-        html { font-size: 16px; }
+        html, body { height: 100%; }
 
         body {
             font-family: 'DM Sans', sans-serif;
             font-weight: 300;
-            background: var(--white);
-            color: var(--ink);
-            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            letter-spacing: 0.01em;
+        }
+
+        /* ── Aurora ── */
+        #aurora {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Dot grid */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 38px 38px;
         }
 
         /* ── Header ── */
         header {
             position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 100;
+            inset: 0 0 auto;
+            z-index: 50;
+            height: 54px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 40px;
-            height: 60px;
-            background: rgba(255,255,255,0.93);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--rule);
+            background: rgba(7,8,15,0.65);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
         }
 
         .logo {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 300;
-            letter-spacing: 0.28em;
+            letter-spacing: 0.32em;
             text-transform: uppercase;
-            color: var(--ink);
+            color: var(--text);
             text-decoration: none;
         }
 
-        .nav-tag {
-            font-size: 0.65rem;
+        /* Language selector placeholder */
+        .lang-btn {
+            font-size: 0.6rem;
             letter-spacing: 0.2em;
             text-transform: uppercase;
             color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 5px 12px;
+            border-radius: 100px;
+            cursor: pointer;
+            background: none;
+            font-family: inherit;
+            transition: border-color 0.2s, color 0.2s;
         }
+        .lang-btn:hover { border-color: var(--bordera); color: var(--text); }
 
-        /* ── Main Layout ── */
+        /* ── Main ── */
         main {
+            position: relative;
+            z-index: 10;
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            padding-top: 60px;
+            padding-top: 54px;
         }
 
-        /* ── Top text ── */
+        /* ── Intro ── */
         .intro {
             text-align: center;
-            padding: 52px 40px 40px;
+            padding: 44px 40px 32px;
             opacity: 0;
             animation: fadeUp 0.9s ease 0.15s forwards;
         }
 
         .intro-eyebrow {
-            font-size: 0.62rem;
-            letter-spacing: 0.28em;
+            font-size: 0.58rem;
+            letter-spacing: 0.32em;
             text-transform: uppercase;
             color: var(--muted);
             margin-bottom: 14px;
@@ -95,40 +129,38 @@
 
         .intro-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.4rem, 5vw, 3.8rem);
+            font-size: clamp(2.6rem, 5.5vw, 4rem);
             font-weight: 300;
-            line-height: 1.08;
+            line-height: 1.06;
         }
-        .intro-title em { font-style: italic; }
+        .intro-title em {
+            font-style: italic;
+            background: linear-gradient(110deg, var(--c0), var(--c3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-        /* ── Carousel Wrapper ── */
+        /* ── Carousel outer ── */
         .carousel-outer {
             width: 100%;
             position: relative;
             opacity: 0;
-            animation: fadeUp 0.9s ease 0.35s forwards;
+            animation: fadeUp 0.9s ease 0.32s forwards;
         }
-
-        /* Edge fade masks */
         .carousel-outer::before,
         .carousel-outer::after {
             content: '';
             position: absolute;
             top: 0; bottom: 0;
-            width: 80px;
+            width: 110px;
             z-index: 2;
             pointer-events: none;
         }
-        .carousel-outer::before {
-            left: 0;
-            background: linear-gradient(to right, rgba(255,255,255,0.95), transparent);
-        }
-        .carousel-outer::after {
-            right: 0;
-            background: linear-gradient(to left, rgba(255,255,255,0.95), transparent);
-        }
+        .carousel-outer::before { left: 0;  background: linear-gradient(to right, var(--bg), transparent); }
+        .carousel-outer::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
 
-        /* ── Scroll Track ── */
+        /* ── Track ── */
         .carousel {
             display: flex;
             gap: 20px;
@@ -136,7 +168,7 @@
             scroll-snap-type: x mandatory;
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
-            padding: 32px calc(50vw - 160px);  /* center first/last card */
+            padding: 40px calc(50vw - 145px);
             scrollbar-width: none;
             cursor: grab;
         }
@@ -145,327 +177,371 @@
 
         /* ── Card ── */
         .cat-card {
-            flex: 0 0 300px;
-            height: 400px;
+            flex: 0 0 268px;
+            height: 340px;
             scroll-snap-align: center;
             scroll-snap-stop: always;
-            background: var(--white);
-            border: 1px solid var(--rule);
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
-            padding: 36px 32px;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
             text-decoration: none;
-            color: var(--ink);
+            color: var(--text);
             position: relative;
             overflow: hidden;
 
-            /* default: shrunk */
-            transform: scale(0.88);
-            opacity: 0.45;
+            transform: scale(0.84);
+            opacity: 0.28;
             transition:
-                transform 0.5s var(--spring),
-                opacity   0.4s ease,
-                border-color 0.3s,
-                background   0.3s;
-            will-change: transform, opacity;
+                transform   0.55s var(--spring),
+                opacity     0.4s ease,
+                border-color 0.4s,
+                background   0.4s;
         }
 
-        /* Active card: full size */
         .cat-card.active {
             transform: scale(1);
             opacity: 1;
-            border-color: var(--ink);
+            background: var(--glassh);
+            border-color: var(--bordera);
         }
 
-        /* Background fill sweeps up on active */
-        .cat-card::before {
-            content: '';
-            position: absolute;
-            left: 0; right: 0; bottom: 0;
-            height: 0%;
-            background: var(--cream);
-            transition: height 0.5s var(--spring);
-            z-index: 0;
-        }
-        .cat-card.active::before { height: 100%; }
+        /* Glow ring on active */
+        .cat-card.active[data-a="0"] { box-shadow: 0 0 50px -8px rgba(123,143,255,0.30); }
+        .cat-card.active[data-a="1"] { box-shadow: 0 0 50px -8px rgba(167,139,250,0.30); }
+        .cat-card.active[data-a="2"] { box-shadow: 0 0 50px -8px rgba(96, 184,255,0.30); }
+        .cat-card.active[data-a="3"] { box-shadow: 0 0 50px -8px rgba(192,132,252,0.30); }
 
-        /* All content above the pseudo bg */
-        .cat-card > * { position: relative; z-index: 1; }
-
-        .card-number {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.75rem;
-            letter-spacing: 0.2em;
-            color: var(--muted);
-            margin-bottom: auto;
-        }
-
+        /* ── Icon ── */
         .card-icon {
-            font-size: 3.2rem;
-            line-height: 1;
-            margin-bottom: 20px;
-            display: block;
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.12);
             transition: transform 0.5s var(--spring);
         }
-        .cat-card.active .card-icon { transform: scale(1.1) translateY(-4px); }
+        .cat-card[data-a="0"] .card-icon { background: rgba(123,143,255,0.14); }
+        .cat-card[data-a="1"] .card-icon { background: rgba(167,139,250,0.14); }
+        .cat-card[data-a="2"] .card-icon { background: rgba(96,184,255,0.14); }
+        .cat-card[data-a="3"] .card-icon { background: rgba(192,132,252,0.14); }
 
-        .card-name {
-            font-size: 1.4rem;
-            font-weight: 500;
-            letter-spacing: 0.01em;
-            margin-bottom: 6px;
+        .cat-card.active .card-icon { transform: scale(1.08) translateY(-3px); }
+
+        /* SVG icon inside */
+        .card-icon svg {
+            width: 34px;
+            height: 34px;
+        }
+        .cat-card[data-a="0"] .card-icon svg { stroke: var(--c0); }
+        .cat-card[data-a="1"] .card-icon svg { stroke: var(--c1); }
+        .cat-card[data-a="2"] .card-icon svg { stroke: var(--c2); }
+        .cat-card[data-a="3"] .card-icon svg { stroke: var(--c3); }
+
+        /* ── Label ── */
+        .card-label {
+            font-size: 1.05rem;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            color: var(--text);
         }
 
-        .card-sub {
+        /* ── Number tag (top-left) ── */
+        .card-num {
+            position: absolute;
+            top: 20px;
+            left: 24px;
+            font-family: 'Cormorant Garamond', serif;
             font-size: 0.68rem;
-            color: var(--muted);
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            margin-bottom: 28px;
-        }
-
-        .card-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.7rem;
             letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--ink);
-            padding: 10px 20px;
-            border: 1px solid var(--ink);
-            width: fit-content;
+            color: var(--muted);
+        }
 
-            /* hidden until active */
+        /* ── Arrow (bottom-right, only on active) ── */
+        .card-arrow {
+            position: absolute;
+            bottom: 22px;
+            right: 24px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.35s ease 0.1s, transform 0.35s var(--spring) 0.1s;
+            transform: scale(0.7);
+            transition: opacity 0.3s ease 0.1s, transform 0.35s var(--spring) 0.1s;
         }
-        .cat-card.active .card-cta {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .card-cta:hover { background: var(--ink); color: var(--white); }
+        .cat-card.active .card-arrow { opacity: 1; transform: scale(1); }
+        .cat-card[data-a="0"] .card-arrow { border-color: rgba(123,143,255,0.4); }
+        .cat-card[data-a="1"] .card-arrow { border-color: rgba(167,139,250,0.4); }
+        .cat-card[data-a="2"] .card-arrow { border-color: rgba(96,184,255,0.4); }
+        .cat-card[data-a="3"] .card-arrow { border-color: rgba(192,132,252,0.4); }
+        .card-arrow svg { width: 14px; height: 14px; }
+        .cat-card[data-a="0"] .card-arrow svg { stroke: var(--c0); }
+        .cat-card[data-a="1"] .card-arrow svg { stroke: var(--c1); }
+        .cat-card[data-a="2"] .card-arrow svg { stroke: var(--c2); }
+        .cat-card[data-a="3"] .card-arrow svg { stroke: var(--c3); }
 
         /* ── Dots ── */
         .dots {
             display: flex;
             gap: 7px;
             justify-content: center;
-            margin: 28px 0 12px;
+            margin: 26px 0 10px;
             opacity: 0;
-            animation: fadeUp 0.7s ease 0.5s forwards;
+            animation: fadeUp 0.7s ease 0.55s forwards;
         }
-
         .dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: var(--rule);
-            transition: background 0.3s, transform 0.3s var(--spring), width 0.3s var(--spring);
+            height: 3px;
+            width: 3px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.18);
+            transition: width 0.4s var(--spring), background 0.3s;
+            cursor: pointer;
         }
-        .dot.active {
-            background: var(--ink);
-            width: 20px;
-            border-radius: 3px;
-        }
+        .dot.active           { width: 20px; }
+        .dot.active[data-a="0"] { background: var(--c0); }
+        .dot.active[data-a="1"] { background: var(--c1); }
+        .dot.active[data-a="2"] { background: var(--c2); }
+        .dot.active[data-a="3"] { background: var(--c3); }
 
-        /* ── Hint ── */
         .swipe-hint {
-            font-size: 0.6rem;
-            letter-spacing: 0.18em;
+            font-size: 0.56rem;
+            letter-spacing: 0.22em;
             text-transform: uppercase;
             color: var(--muted);
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
             opacity: 0;
-            animation: fadeUp 0.7s ease 0.65s forwards;
+            animation: fadeUp 0.7s ease 0.7s forwards;
         }
 
         /* ── Footer ── */
         footer {
-            padding: 20px 40px;
-            border-top: 1px solid var(--rule);
+            position: relative;
+            z-index: 10;
+            padding: 16px 40px;
+            border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         .footer-text {
-            font-size: 0.62rem;
+            font-size: 0.58rem;
             letter-spacing: 0.14em;
             text-transform: uppercase;
             color: var(--muted);
         }
 
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from { opacity:0; transform:translateY(14px); }
+            to   { opacity:1; transform:translateY(0); }
         }
 
-        /* Mobile adjustments */
-        @media (max-width: 500px) {
+        @media (max-width: 480px) {
             header { padding: 0 20px; }
-            .intro { padding: 40px 20px 28px; }
-            .cat-card { flex: 0 0 260px; height: 360px; }
-            .carousel { padding: 28px calc(50vw - 130px); }
-            footer { padding: 16px 20px; }
+            .intro  { padding: 36px 20px 24px; }
+            .cat-card { flex: 0 0 236px; height: 300px; }
+            .carousel { padding: 36px calc(50vw - 118px); }
+            footer { padding: 14px 20px; }
         }
     </style>
 </head>
 <body>
 
-<!-- ── Header ── -->
+<canvas id="aurora"></canvas>
+
 <header>
     <a href="/" class="logo">TrendStudio</a>
-    <span class="nav-tag">楽天 / リアルタイム</span>
+    <!-- Language selector: will be implemented later -->
+    <button class="lang-btn" id="langBtn">JP / CN / EN</button>
 </header>
 
 <main>
-    <!-- Title -->
     <div class="intro">
-        <p class="intro-eyebrow">Real-time Trend Intelligence</p>
-        <h1 class="intro-title">洞察<em>市场</em>趋势</h1>
+        <p class="intro-eyebrow">Rakuten · Real-time Ranking</p>
+        <h1 class="intro-title">Trend<em> Studio</em></h1>
     </div>
 
-    <!-- Carousel -->
     <div class="carousel-outer">
         <div class="carousel" id="carousel">
 
-            <a th:href="@{/analysis(genre='0',      lang=${lang})}" class="cat-card" data-index="0">
-                <span class="card-number">01 / 04</span>
-                <span class="card-icon">◈</span>
-                <span class="card-name">综合排行</span>
-                <span class="card-sub">All Categories</span>
-                <span class="card-cta">查看分析 →</span>
+            <!-- 综合 -->
+            <a th:href="@{/analysis(genre='0', lang=${lang})}" class="cat-card" data-a="0">
+                <span class="card-num">01</span>
+                <span class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="M12 3a9 9 0 0 1 6 15M6.5 5.5l11 13"/>
+                        <path d="M3 12h18"/>
+                    </svg>
+                </span>
+                <span class="card-label">Overall</span>
+                <span class="card-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                </span>
             </a>
 
-            <a th:href="@{/analysis(genre='551167', lang=${lang})}" class="cat-card" data-index="1">
-                <span class="card-number">02 / 04</span>
-                <span class="card-icon">◉</span>
-                <span class="card-name">家电类</span>
-                <span class="card-sub">Electronics</span>
-                <span class="card-cta">查看分析 →</span>
+            <!-- 家电 -->
+            <a th:href="@{/analysis(genre='551167', lang=${lang})}" class="cat-card" data-a="1">
+                <span class="card-num">02</span>
+                <span class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                        <path d="M8 21h8M12 17v4"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                </span>
+                <span class="card-label">Electronics</span>
+                <span class="card-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                </span>
             </a>
 
-            <a th:href="@{/analysis(genre='100371', lang=${lang})}" class="cat-card" data-index="2">
-                <span class="card-number">03 / 04</span>
-                <span class="card-icon">◌</span>
-                <span class="card-name">服装类</span>
-                <span class="card-sub">Fashion</span>
-                <span class="card-cta">查看分析 →</span>
+            <!-- 服装 -->
+            <a th:href="@{/analysis(genre='100371', lang=${lang})}" class="cat-card" data-a="2">
+                <span class="card-num">03</span>
+                <span class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/>
+                    </svg>
+                </span>
+                <span class="card-label">Fashion</span>
+                <span class="card-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                </span>
             </a>
 
-            <a th:href="@{/analysis(genre='216129', lang=${lang})}" class="cat-card" data-index="3">
-                <span class="card-number">04 / 04</span>
-                <span class="card-icon">◎</span>
-                <span class="card-name">美妆类</span>
-                <span class="card-sub">Beauty</span>
-                <span class="card-cta">查看分析 →</span>
+            <!-- 美妆 -->
+            <a th:href="@{/analysis(genre='216129', lang=${lang})}" class="cat-card" data-a="3">
+                <span class="card-num">04</span>
+                <span class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22c4.97 0 9-2.69 9-6 0-1.77-1.08-3.37-2.83-4.56"/>
+                        <path d="M15.59 12.56C16.5 11.7 17 10.63 17 9.5 17 6.46 14.76 4 12 4S7 6.46 7 9.5c0 1.13.5 2.2 1.41 3.06"/>
+                        <path d="M5 16c0 3.31 3.13 6 7 6"/>
+                        <path d="M8.83 16.17C7.12 15 6 13.42 6 11.7 6 8.65 8.69 6.17 12 6"/>
+                    </svg>
+                </span>
+                <span class="card-label">Beauty</span>
+                <span class="card-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6"/>
+                    </svg>
+                </span>
             </a>
 
         </div>
     </div>
 
-    <!-- Dots indicator -->
     <div class="dots" id="dots">
-        <div class="dot active" data-i="0"></div>
-        <div class="dot"        data-i="1"></div>
-        <div class="dot"        data-i="2"></div>
-        <div class="dot"        data-i="3"></div>
+        <div class="dot active" data-a="0"></div>
+        <div class="dot"        data-a="1"></div>
+        <div class="dot"        data-a="2"></div>
+        <div class="dot"        data-a="3"></div>
     </div>
-
-    <p class="swipe-hint">← 左右滑动 →</p>
+    <p class="swipe-hint">swipe to explore</p>
 </main>
 
 <footer>
     <span class="footer-text">© 2026 TrendStudio</span>
-    <span class="footer-text">Powered by 楽天 Ranking</span>
+    <span class="footer-text">Rakuten Ranking</span>
 </footer>
 
 <script>
-(function () {
-    const carousel = document.getElementById('carousel');
-    const cards    = Array.from(carousel.querySelectorAll('.cat-card'));
-    const dots     = Array.from(document.getElementById('dots').querySelectorAll('.dot'));
-    let activeIdx  = 0;
+/* ── Aurora ── */
+(function(){
+    const cv = document.getElementById('aurora');
+    const cx = cv.getContext('2d');
+    const resize = () => { cv.width = innerWidth; cv.height = innerHeight; };
+    resize(); addEventListener('resize', resize);
 
-    /* ── Activate card by index ── */
-    function activate(idx) {
-        activeIdx = idx;
-        cards.forEach((c, i) => c.classList.toggle('active', i === idx));
-        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    const orbs = [
+        { x:.18, y:.35, r:.42, rgb:'123,143,255', vx:.00010, vy:.00007 },
+        { x:.72, y:.22, r:.32, rgb:'167,139,250', vx:-.00008, vy:.00010 },
+        { x:.55, y:.72, r:.36, rgb:'96,184,255',  vx:.00009, vy:-.00008 },
+        { x:.82, y:.60, r:.28, rgb:'192,132,252', vx:-.00010, vy:-.00006 },
+    ];
+
+    let last = 0;
+    function frame(ts) {
+        const dt = ts - last || 16; last = ts;
+        const W = cv.width, H = cv.height;
+        cx.clearRect(0, 0, W, H);
+        orbs.forEach(o => {
+            o.x += o.vx * dt; o.y += o.vy * dt;
+            if (o.x < .08 || o.x > .92) o.vx *= -1;
+            if (o.y < .08 || o.y > .92) o.vy *= -1;
+            const gx = o.x*W, gy = o.y*H, gr = Math.min(W,H)*o.r;
+            const g = cx.createRadialGradient(gx,gy,0,gx,gy,gr);
+            g.addColorStop(0,  `rgba(${o.rgb},.20)`);
+            g.addColorStop(.5, `rgba(${o.rgb},.07)`);
+            g.addColorStop(1,  `rgba(${o.rgb},0)`);
+            cx.fillStyle = g;
+            cx.fillRect(0,0,W,H);
+        });
+        requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+})();
+
+/* ── Carousel ── */
+(function(){
+    const el    = document.getElementById('carousel');
+    const cards = [...el.querySelectorAll('.cat-card')];
+    const dots  = [...document.getElementById('dots').querySelectorAll('.dot')];
+    let active  = 0;
+
+    function go(idx) {
+        active = idx;
+        cards.forEach((c,i) => c.classList.toggle('active', i===idx));
+        dots.forEach((d,i)  => d.classList.toggle('active', i===idx));
     }
 
-    /* ── Find center card on scroll ── */
-    function onScroll() {
-        const cx = carousel.scrollLeft + carousel.clientWidth / 2;
-        let closest = 0, minDist = Infinity;
-        cards.forEach((card, i) => {
-            const cardCx = card.offsetLeft + card.offsetWidth / 2;
-            const dist   = Math.abs(cx - cardCx);
-            if (dist < minDist) { minDist = dist; closest = i; }
+    el.addEventListener('scroll', () => {
+        const mid = el.scrollLeft + el.clientWidth/2;
+        let best = 0, bd = Infinity;
+        cards.forEach((c,i) => {
+            const d = Math.abs(c.offsetLeft + c.offsetWidth/2 - mid);
+            if (d < bd) { bd=d; best=i; }
         });
-        if (closest !== activeIdx) activate(closest);
-    }
+        if (best !== active) go(best);
+    }, {passive:true});
 
-    carousel.addEventListener('scroll', onScroll, { passive: true });
-
-    /* ── Click dot → scroll to card ── */
-    dots.forEach((dot, i) => {
-        dot.addEventListener('click', () => {
-            const card = cards[i];
-            carousel.scrollTo({
-                left: card.offsetLeft - (carousel.clientWidth - card.offsetWidth) / 2,
-                behavior: 'smooth'
-            });
-        });
+    const scrollTo = i => el.scrollTo({
+        left: cards[i].offsetLeft - (el.clientWidth-cards[i].offsetWidth)/2,
+        behavior:'smooth'
     });
 
-    /* ── Click card (not active) → center it instead of navigating ── */
-    cards.forEach((card, i) => {
-        card.addEventListener('click', e => {
-            if (i !== activeIdx) {
-                e.preventDefault();
-                carousel.scrollTo({
-                    left: card.offsetLeft - (carousel.clientWidth - card.offsetWidth) / 2,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
+    dots.forEach((d,i) => d.addEventListener('click', () => scrollTo(i)));
 
-    /* ── Mouse drag support (desktop) ── */
-    let isDragging = false, startX = 0, startScroll = 0, moved = false;
+    cards.forEach((c,i) => c.addEventListener('click', e => {
+        if (i !== active) { e.preventDefault(); scrollTo(i); }
+    }));
 
-    carousel.addEventListener('mousedown', e => {
-        isDragging = true; moved = false;
-        startX = e.pageX;
-        startScroll = carousel.scrollLeft;
-        carousel.classList.add('grabbing');
-    });
+    let drag=false, sx=0, ss=0, moved=false;
+    el.addEventListener('mousedown', e => { drag=true; moved=false; sx=e.pageX; ss=el.scrollLeft; el.classList.add('grabbing'); });
+    addEventListener('mousemove', e => { if(!drag) return; if(Math.abs(e.pageX-sx)>4) moved=true; el.scrollLeft=ss-(e.pageX-sx); });
+    addEventListener('mouseup', () => { drag=false; el.classList.remove('grabbing'); });
+    el.addEventListener('click', e => { if(moved){e.preventDefault();moved=false;} });
 
-    window.addEventListener('mousemove', e => {
-        if (!isDragging) return;
-        const dx = e.pageX - startX;
-        if (Math.abs(dx) > 4) moved = true;
-        carousel.scrollLeft = startScroll - dx;
-    });
-
-    window.addEventListener('mouseup', () => {
-        if (!isDragging) return;
-        isDragging = false;
-        carousel.classList.remove('grabbing');
-    });
-
-    /* Prevent link navigation when dragged */
-    carousel.addEventListener('click', e => {
-        if (moved) { e.preventDefault(); moved = false; }
-    });
-
-    /* ── Init: activate first card ── */
-    activate(0);
+    go(0);
 })();
 </script>
-
 </body>
 </html>
