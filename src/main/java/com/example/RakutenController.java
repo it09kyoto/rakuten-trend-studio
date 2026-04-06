@@ -13,6 +13,9 @@ public class RakutenController {
     @Autowired
     private RakutenSpider rakutenSpider;
 
+    @Autowired
+    private ProductRepository productRepository; // 核心：注入数据库工具
+
     @GetMapping("/")
     public String index(@RequestParam(name = "lang", defaultValue = "cn") String lang, Model model) {
         model.addAttribute("lang", lang);
@@ -25,9 +28,14 @@ public class RakutenController {
             @RequestParam(name = "lang", defaultValue = "cn") String lang,
             Model model) {
 
-        List<Map<String, String>> products = rakutenSpider.fetchTrendingData(genre);
-        model.addAttribute("productList", products);
+        // 1. 获取抓取的数据（Spider 内部已经执行了保存逻辑）
+        rakutenSpider.fetchTrendingData(genre);
+
+        // 2. 直接从数据库读取所有已存入的数据传给前端
+        // 注意：变量名必须是 "products"
+        model.addAttribute("products", productRepository.findAll());
         model.addAttribute("lang", lang);
+
         return "analysis";
     }
 }
